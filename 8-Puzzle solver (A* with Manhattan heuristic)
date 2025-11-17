@@ -1,0 +1,58 @@
+# 8_puzzle_astar.py
+import heapq
+
+goal = (1,2,3,4,5,6,7,8,0)
+
+def manhattan(state):
+    dist = 0
+    for i, v in enumerate(state):
+        if v == 0: continue
+        gi = v-1
+        dist += abs(i//3 - gi//3) + abs(i%3 - gi%3)
+    return dist
+
+def neighbors(state):
+    s = list(state)
+    i = s.index(0)
+    moves = []
+    dirs = [(-1,0),(1,0),(0,-1),(0,1)]
+    for dr,dc in dirs:
+        r,c = divmod(i,3)
+        nr, nc = r+dr, c+dc
+        if 0<=nr<3 and 0<=nc<3:
+            j = nr*3+nc
+            t = list(s)
+            t[i], t[j] = t[j], t[i]
+            moves.append(tuple(t))
+    return moves
+
+def astar(start):
+    openp = [(manhattan(start), 0, start, None)]
+    came_from = {}
+    gscore = {start:0}
+    while openp:
+        f, g, cur, parent = heapq.heappop(openp)
+        if cur in came_from: continue
+        came_from[cur] = parent
+        if cur == goal:
+            path = []
+            n = cur
+            while n:
+                path.append(n)
+                n = came_from[n]
+            return list(reversed(path))
+        for nb in neighbors(cur):
+            ng = g+1
+            if nb in gscore and ng >= gscore[nb]: continue
+            gscore[nb] = ng
+            heapq.heappush(openp, (ng + manhattan(nb), ng, nb, cur))
+    return None
+
+if __name__ == "__main__":
+    start = (1,2,3,4,0,6,7,5,8)  # example
+    path = astar(start)
+    if path:
+        for p in path:
+            print(p[:3], p[3:6], p[6:])
+    else:
+        print("No solution")
