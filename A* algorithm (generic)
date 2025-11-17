@@ -1,0 +1,39 @@
+# astar_generic.py
+import heapq
+
+def a_star(start, goal_test, neighbors_fn, h):
+    openp = [(h(start), 0, start, None)]
+    came_from = {}
+    gscore = {start:0}
+    while openp:
+        f, g, cur, parent = heapq.heappop(openp)
+        if cur in came_from: continue
+        came_from[cur] = parent
+        if goal_test(cur):
+            path = []
+            n = cur
+            while n:
+                path.append(n)
+                n = came_from[n]
+            return list(reversed(path))
+        for nb, cost in neighbors_fn(cur):
+            ng = g + cost
+            if nb in gscore and ng >= gscore[nb]: continue
+            gscore[nb] = ng
+            heapq.heappush(openp, (ng + h(nb), ng, nb, cur))
+    return None
+
+# Example: shortest path on grid
+if __name__=="__main__":
+    start = (0,0)
+    goal = (3,3)
+    def goal_test(s): return s==goal
+    def neighbors_fn(s):
+        x,y = s
+        for dx,dy in [(1,0),(-1,0),(0,1),(0,-1)]:
+            nx,ny = x+dx,y+dy
+            if 0<=nx<=3 and 0<=ny<=3:
+                yield (nx,ny), 1
+    def h(s): return abs(s[0]-goal[0]) + abs(s[1]-goal[1])
+    path = a_star(start, goal_test, neighbors_fn, h)
+    print(path)
