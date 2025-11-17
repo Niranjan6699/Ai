@@ -1,0 +1,13 @@
+# dfs.py
+def dfs_recursive(graph, start, visited=None, order=None):
+    if visited is None:
+        visited=set(); order=[]
+    visited.add(start); order.append(start)
+    for v in graph.get(start, []):
+        if v not in visited:
+            dfs_recursive(graph, v, visited, order)
+    return order
+
+if __name__=="__main__":
+    g = {'A':['B','C'],'B':['D'],'C':['E'],'D':[],'E':[]}
+    print(dfs_recursive(g,'A'))
