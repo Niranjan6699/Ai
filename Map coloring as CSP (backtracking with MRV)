@@ -1,0 +1,36 @@
+# map_coloring_csp.py
+
+def map_coloring(variables, domains, neighbors):
+    assignment = {}
+    def consistent(var, val):
+        for nb in neighbors.get(var, []):
+            if nb in assignment and assignment[nb]==val:
+                return False
+        return True
+
+    # simple backtracking + MRV
+    def select_var():
+        unassigned = [v for v in variables if v not in assignment]
+        return min(unassigned, key=lambda v: len(domains[v]))
+
+    def backtrack():
+        if len(assignment)==len(variables): return dict(assignment)
+        var = select_var()
+        for val in domains[var]:
+            if consistent(var, val):
+                assignment[var]=val
+                result = backtrack()
+                if result: return result
+                del assignment[var]
+        return None
+
+    return backtrack()
+
+if __name__=="__main__":
+    vars = ['WA','NT','SA','Q','NSW','V','T']
+    doms = {v:['red','green','blue'] for v in vars}
+    nbrs = {
+        'WA':['NT','SA'],'NT':['WA','SA','Q'],'SA':['WA','NT','Q','NSW','V'],
+        'Q':['NT','SA','NSW'],'NSW':['Q','SA','V'],'V':['SA','NSW'],'T':[]
+    }
+    print(map_coloring(vars, doms, nbrs))
