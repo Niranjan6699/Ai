@@ -1,0 +1,24 @@
+# alphabeta.py
+def alphabeta(state, depth, alpha, beta, maximizingPlayer, legal_moves_fn, apply_fn, terminal_fn, eval_fn):
+    if depth==0 or terminal_fn(state):
+        return eval_fn(state), None
+    if maximizingPlayer:
+        value = -float('inf'); best_move=None
+        for m in legal_moves_fn(state):
+            v,_ = alphabeta(apply_fn(state,m), depth-1, alpha, beta, False, legal_moves_fn, apply_fn, terminal_fn, eval_fn)
+            if v > value:
+                value, best_move = v, m
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+        return value, best_move
+    else:
+        value = float('inf'); best_move=None
+        for m in legal_moves_fn(state):
+            v,_ = alphabeta(apply_fn(state,m), depth-1, alpha, beta, True, legal_moves_fn, apply_fn, terminal_fn, eval_fn)
+            if v < value:
+                value, best_move = v, m
+            beta = min(beta, value)
+            if beta <= alpha:
+                break
+        return value, best_move
