@@ -1,0 +1,38 @@
+# water_jug_bfs.py
+from collections import deque
+
+def water_jug(capacities, start, target):
+    # capacities: (a,b), start and target tuples
+    seen = set([start])
+    q = deque([(start, [])])
+    while q:
+        state, path = q.popleft()
+        if state == target:
+            return path + [state]
+        a,b = state
+        ca, cb = capacities
+        next_states = []
+        # fill A, fill B
+        next_states.append((ca, b))
+        next_states.append((a, cb))
+        # empty A, empty B
+        next_states.append((0, b))
+        next_states.append((a, 0))
+        # pour A->B
+        transfer = min(a, cb-b)
+        next_states.append((a-transfer, b+transfer))
+        # pour B->A
+        transfer = min(b, ca-a)
+        next_states.append((a+transfer, b-transfer))
+        for ns in next_states:
+            if ns not in seen:
+                seen.add(ns)
+                q.append((ns, path+[state]))
+    return None
+
+if __name__=="__main__":
+    caps = (4,3)
+    start = (4,0)
+    target = (2,0)  # example: measure 2 liters
+    sol = water_jug(caps, start, target)
+    print(sol)
