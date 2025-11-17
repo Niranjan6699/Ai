@@ -1,0 +1,20 @@
+# crypt_arithmetic.py
+import itertools
+
+def solve_send_more_money():
+    letters = list(set("SENDMOREMONEY"))
+    # letters actually: S,E,N,D,M,O,R,Y  (8 letters)
+    letters = ['S','E','N','D','M','O','R','Y']
+    for perm in itertools.permutations('0123456789', len(letters)):
+        if perm[letters.index('S')] == '0': continue
+        if perm[letters.index('M')] == '0': continue
+        mapping = dict(zip(letters, perm))
+        def val(word):
+            return int(''.join(mapping[ch] for ch in word))
+        if val("SEND") + val("MORE") == val("MONEY"):
+            return mapping, val("SEND"), val("MORE"), val("MONEY")
+    return None
+
+if __name__=="__main__":
+    res = solve_send_more_money()
+    print(res)
