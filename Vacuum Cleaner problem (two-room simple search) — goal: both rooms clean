@@ -1,0 +1,30 @@
+# vacuum_cleaner.py
+from collections import deque
+
+def solve_vacuum(start):
+    # state: (pos, dirtA, dirtB) pos in {'A','B'}, dirt True=dirty
+    goal = ('A', False, False)  # pos not important; both clean
+    q = deque([(start, [])])
+    seen = {start}
+    while q:
+        state, path = q.popleft()
+        _, da, db = state
+        if not da and not db:
+            return path + [state]
+        pos, da, db = state
+        # actions: suck, move
+        if (pos=='A' and da) or (pos=='B' and db):
+            ns = (pos, False, db) if pos=='A' else (pos, da, False)
+            if ns not in seen:
+                seen.add(ns); q.append((ns, path+[state]))
+        else:
+            # move
+            ns = ('B', da, db) if pos=='A' else ('A', da, db)
+            if ns not in seen:
+                seen.add(ns); q.append((ns, path+[state]))
+    return None
+
+if __name__=="__main__":
+    start = ('A', True, True)
+    sol = solve_vacuum(start)
+    print(sol)
