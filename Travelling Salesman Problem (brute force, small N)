@@ -1,0 +1,23 @@
+# tsp_bruteforce.py
+import itertools
+
+def tsp_bruteforce(dist):
+    n = len(dist)
+    nodes = list(range(n))
+    best = None
+    best_cost = float('inf')
+    for perm in itertools.permutations(nodes[1:]):  # fix 0 as start
+        tour = (0,) + perm + (0,)
+        cost = sum(dist[tour[i]][tour[i+1]] for i in range(len(tour)-1))
+        if cost < best_cost:
+            best_cost = cost; best = tour
+    return best, best_cost
+
+if __name__=="__main__":
+    dist = [
+        [0,10,15,20],
+        [10,0,35,25],
+        [15,35,0,30],
+        [20,25,30,0]
+    ]
+    print(tsp_bruteforce(dist))
