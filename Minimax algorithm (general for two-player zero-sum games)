@@ -1,0 +1,17 @@
+def minimax(state, player, legal_moves_fn, apply_fn, terminal_fn, eval_fn):
+    if terminal_fn(state):
+        return eval_fn(state), None
+    if player == 'MAX':
+        best = (-float('inf'), None)
+        for m in legal_moves_fn(state):
+            s2 = apply_fn(state, m)
+            val,_ = minimax(s2, 'MIN', legal_moves_fn, apply_fn, terminal_fn, eval_fn)
+            if val > best[0]: best = (val, m)
+        return best
+    else:
+        best = (float('inf'), None)
+        for m in legal_moves_fn(state):
+            s2 = apply_fn(state, m)
+            val,_ = minimax(s2, 'MAX', legal_moves_fn, apply_fn, terminal_fn, eval_fn)
+            if val < best[0]: best = (val, m)
+        return best
